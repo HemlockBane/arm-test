@@ -1,3 +1,4 @@
+import 'package:arm_test/src/screens/home.dart';
 import 'package:arm_test/src/screens/sign_up.dart';
 import 'package:flutter/material.dart';
 
@@ -34,8 +35,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 vertSpace(height: 20),
                 ElevatedButton(
-                  onPressed: () {},
                   child: Text('Login'),
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(HomeScreen.routeName);
+                  },
                 ),
                 vertSpace(height: 5),
                 TextButton(

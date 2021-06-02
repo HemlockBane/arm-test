@@ -1,47 +1,46 @@
+import 'package:arm_test/src/screens/posts.dart';
 import 'package:flutter/material.dart';
 
+import 'articles.dart';
+
 class HomeScreen extends StatefulWidget {
-  HomeScreen({Key? key, required this.title}) : super(key: key);
-  final String title;
+  static final String routeName = 'home';
+  HomeScreen({Key? key}) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _counter = 0;
+  int _currentTabIndex = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+  final tabs = [
+    PostsScreen(),
+    ArticlesScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
+    return SafeArea(
+      child: Scaffold(
+        body: tabs[_currentTabIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _currentTabIndex,
+          onTap: _changeTab,
+          items: [
+            BottomNavigationBarItem(
+                label: "Posts", icon: Icon(Icons.post_add_rounded)),
+            BottomNavigationBarItem(
+                label: "Articles", icon: Icon(Icons.article))
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ),
     );
+  }
+
+  void _changeTab(int nextTabIndex) {
+    setState(() {
+      _currentTabIndex = nextTabIndex;
+    });
   }
 }
