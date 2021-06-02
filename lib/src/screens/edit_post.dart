@@ -1,18 +1,19 @@
 import 'package:arm_test/src/services/firestore_service.dart';
 import 'package:flutter/material.dart';
 
-class NewPostScreen extends StatefulWidget {
-  static final String routeName = 'new_post';
-  const NewPostScreen({required this.user});
+class EditPostScreen extends StatefulWidget {
+  const EditPostScreen({required this.user, required this.post});
 
   final User user;
+  final Post post;
 
   @override
-  _NewPostScreenState createState() => _NewPostScreenState();
+  _EditPostScreenState createState() => _EditPostScreenState();
 }
 
-class _NewPostScreenState extends State<NewPostScreen> {
+class _EditPostScreenState extends State<EditPostScreen> {
   User user = User.empty();
+  Post post = Post.empty();
   var titleController = TextEditingController();
   var descriptionController = TextEditingController();
 
@@ -20,16 +21,27 @@ class _NewPostScreenState extends State<NewPostScreen> {
   void initState() {
     super.initState();
     user = widget.user;
-    print(user);
+    post = widget.post;
+    titleController.text = post.title;
+    descriptionController.text = post.description;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("New Post"),
+        title: Text("Edit Post"),
         automaticallyImplyLeading: false,
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () async {
+              await FirestoreDB.deletePost(post);
+              Navigator.pop(context);
+            },
+          )
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -50,14 +62,14 @@ class _NewPostScreenState extends State<NewPostScreen> {
                 vertSpace(height: 20),
                 vertSpace(height: 20),
                 ElevatedButton(
-                  child: Text('Add post'),
+                  child: Text('Update post'),
                   onPressed: () async {
-                    final post = Post(
-                        title: titleController.text,
-                        description: descriptionController.text,
-                        email: user.email);
+                    final newPost = post.copyWith(
+                      title: titleController.text,
+                      description: descriptionController.text,
+                    );
 
-                    await FirestoreDB.addPost(post);
+                    await FirestoreDB.updatePost(newPost);
                     Navigator.pop(context);
                   },
                 ),

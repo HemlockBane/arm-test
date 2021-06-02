@@ -26,7 +26,19 @@ class FirestoreDB {
   }
 
   static Future<void> addPost(Post post) async {
-    final docRef = await postsCollection.add(post.toJson());
+    final docRef = postsCollection.doc();
+    post.id = docRef.id;
+    await docRef.set(post.toJson());
+  }
+
+  static Future<void> updatePost(Post post) async {
+    final docRef = postsCollection.doc(post.id);
+    await docRef.update(post.toJson());
+  }
+
+  static Future<void> deletePost(Post post) async {
+    final docRef = postsCollection.doc(post.id);
+    await docRef.delete();
   }
 }
 
@@ -71,13 +83,15 @@ class User {
 }
 
 class Post {
+  String id;
   String title;
   String description;
   String imageUrl;
   String email;
 
   Post(
-      {this.title = '',
+      {this.id = "",
+      this.title = '',
       this.description = "",
       this.imageUrl = "",
       this.email = ""});
@@ -92,6 +106,7 @@ class Post {
 
   factory Post.fromDocSnapshot(QueryDocumentSnapshot doc) {
     return Post(
+      id: doc["id"],
       title: doc["title"],
       email: doc["email"],
       description: doc["description"],
@@ -99,9 +114,21 @@ class Post {
     );
   }
 
+  Post copyWith({String? title, String? description}) {
+    return Post(
+      id: this.id,
+      email: this.email,
+      imageUrl: this.imageUrl,
+      title: title ?? this.title,
+      description: description ?? this.description,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     Map<String, dynamic> map = Map();
+    map['id'] = id;
     map['title'] = title;
+    map['email'] = email;
     map['description'] = description;
     map['imageUrl'] = imageUrl;
     return map;
@@ -110,7 +137,9 @@ class Post {
   @override
   String toString() {
     return ''
+        'id - $id, '
         'title - $title, '
+        'email - $email, '
         'description - $description, '
         'imageUrl - $imageUrl, ';
   }

@@ -3,6 +3,8 @@ import 'package:arm_test/src/services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import 'edit_post.dart';
+
 class PostsScreen extends StatefulWidget {
   const PostsScreen({required this.user});
 
@@ -39,7 +41,8 @@ class _PostsScreenState extends State<PostsScreen> {
         child: Icon(Icons.post_add_sharp),
       ),
       body: StreamBuilder(
-        stream: postsCollection.snapshots(),
+        stream:
+            postsCollection.where("email", isEqualTo: user.email).snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
           if (!snapshot.hasData) return Text("Loading");
 
@@ -52,6 +55,15 @@ class _PostsScreenState extends State<PostsScreen> {
               return ListTile(
                 title: Text(post.title),
                 subtitle: Text(post.description),
+                onTap: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (context) {
+                    return EditPostScreen(
+                      user: user,
+                      post: post,
+                    );
+                  }));
+                },
               );
             },
           );
