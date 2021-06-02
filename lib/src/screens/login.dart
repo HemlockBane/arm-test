@@ -1,5 +1,6 @@
 import 'package:arm_test/src/screens/home.dart';
 import 'package:arm_test/src/screens/sign_up.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -11,8 +12,33 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  Future<FirebaseApp> initialiseFirebase() async {
+    final firebaseApp = await Firebase.initializeApp();
+    return firebaseApp;
+  }
+
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: initialiseFirebase(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Text('Error initializing Firebase');
+        } else if (snapshot.connectionState == ConnectionState.done) {
+          return showLoginForm(context);
+        }
+        return Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(
+              Colors.blue,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget showLoginForm(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
