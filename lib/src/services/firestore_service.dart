@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-final CollectionReference _usersCollection = _firestore.collection('users');
-final CollectionReference _postsCollection = _firestore.collection('posts');
+final CollectionReference usersCollection = _firestore.collection('users');
+final CollectionReference postsCollection = _firestore.collection('posts');
 
 class FirestoreDB {
   static Future<void> register({required Map<String, String> data}) async {
     try {
-      final ref = _usersCollection.doc(data["email"]);
+      final ref = usersCollection.doc(data["email"]);
       await ref.set(data);
     } catch (e) {
       throw (e);
@@ -15,7 +15,7 @@ class FirestoreDB {
   }
 
   static Future<User> login(String email, String password) async {
-    final ref = _usersCollection.doc(email);
+    final ref = usersCollection.doc(email);
     final doc = await ref.get();
     User user = User.empty();
 
@@ -23,6 +23,10 @@ class FirestoreDB {
       user = User.fromDocSnapshot(doc);
     }
     return user;
+  }
+
+  static Future<void> addPost(Post post) async {
+    final docRef = await postsCollection.add(post.toJson());
   }
 }
 
@@ -63,5 +67,51 @@ class User {
         'lastname - $lastName, '
         'email - $email, '
         'password - $password, ';
+  }
+}
+
+class Post {
+  String title;
+  String description;
+  String imageUrl;
+  String email;
+
+  Post(
+      {this.title = '',
+      this.description = "",
+      this.imageUrl = "",
+      this.email = ""});
+
+  Post.empty() : this();
+
+  // bool get isValid =>
+  //     this.firstName.isNotEmpty &&
+  //     this.lastName.isNotEmpty &&
+  //     this.email.isNotEmpty &&
+  //     this.password.isNotEmpty;
+
+  factory Post.fromDocSnapshot(QueryDocumentSnapshot doc) {
+    return Post(
+      title: doc["title"],
+      email: doc["email"],
+      description: doc["description"],
+      imageUrl: doc["imageUrl"],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> map = Map();
+    map['title'] = title;
+    map['description'] = description;
+    map['imageUrl'] = imageUrl;
+    return map;
+  }
+
+  @override
+  String toString() {
+    return ''
+        'title - $title, '
+        'description - $description, '
+        'imageUrl - $imageUrl, ';
   }
 }

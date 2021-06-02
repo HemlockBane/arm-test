@@ -1,5 +1,6 @@
 import 'package:arm_test/src/screens/home.dart';
 import 'package:arm_test/src/screens/login.dart';
+import 'package:arm_test/src/screens/new_post.dart';
 import 'package:arm_test/src/screens/sign_up.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
       routes: {
         SignUpScreen.routeName: (BuildContext context) => SignUpScreen(),
         LoginScreen.routeName: (BuildContext context) => LoginScreen(),
-        // HomeScreen.routeName: (BuildContext context) => HomeScreen(),
+        // NewPostScreen.routeName: (BuildContext context) => NewPostScreen(),
       },
     );
   }

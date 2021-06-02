@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'articles.dart';
 
 class HomeScreen extends StatefulWidget {
-  static final String routeName = 'home';
-  HomeScreen({required User user, Key? key}) : super(key: key);
+  final User user;
+  HomeScreen({required this.user});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -14,11 +14,21 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentTabIndex = 0;
+  User user = User.empty();
 
-  final tabs = [
-    PostsScreen(),
-    ArticlesScreen(),
-  ];
+  List<Widget> tabs = [];
+
+  @override
+  void initState() {
+    super.initState();
+    user = widget.user;
+    tabs.addAll([
+      PostsScreen(
+        user: user,
+      ),
+      ArticlesScreen(),
+    ]);
+  }
 
   @override
   Widget build(BuildContext context) {
