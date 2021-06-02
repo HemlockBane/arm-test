@@ -1,11 +1,12 @@
 import 'package:arm_test/src/screens/posts.dart';
+import 'package:arm_test/src/services/firestore_service.dart';
 import 'package:flutter/material.dart';
 
 import 'articles.dart';
 
 class HomeScreen extends StatefulWidget {
   static final String routeName = 'home';
-  HomeScreen({Key? key}) : super(key: key);
+  HomeScreen({required User user, Key? key}) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();

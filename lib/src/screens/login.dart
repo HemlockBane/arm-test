@@ -1,5 +1,6 @@
 import 'package:arm_test/src/screens/home.dart';
 import 'package:arm_test/src/screens/sign_up.dart';
+import 'package:arm_test/src/services/firestore_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +13,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  var passwordController = TextEditingController();
+  var emailController = TextEditingController();
+
   Future<FirebaseApp> initialiseFirebase() async {
     final firebaseApp = await Firebase.initializeApp();
     return firebaseApp;
@@ -53,17 +57,29 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 vertSpace(height: 100),
                 TextFormField(
+                  controller: emailController,
                   decoration: InputDecoration(labelText: 'Email'),
                 ),
                 vertSpace(height: 20),
                 TextFormField(
+                  controller: passwordController,
                   decoration: InputDecoration(labelText: 'Password'),
                 ),
                 vertSpace(height: 20),
                 ElevatedButton(
                   child: Text('Login'),
-                  onPressed: () {
-                    Navigator.of(context).pushNamed(HomeScreen.routeName);
+                  onPressed: () async {
+                    var email = emailController.text;
+                    var password = passwordController.text;
+
+                    final user = await FirestoreDB.login(email, password);
+
+                    if (user.isValid) {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return HomeScreen(user: user);
+                      }));
+                    }
                   },
                 ),
                 vertSpace(height: 5),

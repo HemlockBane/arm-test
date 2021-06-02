@@ -1,4 +1,5 @@
 import 'package:arm_test/src/screens/login.dart';
+import 'package:arm_test/src/services/firestore_service.dart';
 import 'package:flutter/material.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -10,6 +11,11 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  var fNameController = TextEditingController();
+  var lNameController = TextEditingController();
+  var passwordController = TextEditingController();
+  var emailController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,30 +32,49 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 vertSpace(height: 100),
                 TextFormField(
+                  controller: fNameController,
                   decoration: InputDecoration(labelText: 'Firstname'),
                 ),
                 vertSpace(height: 20),
                 TextFormField(
+                  controller: lNameController,
                   decoration: InputDecoration(labelText: 'Lastname'),
                 ),
                 vertSpace(height: 20),
                 TextFormField(
+                  controller: emailController,
                   decoration: InputDecoration(labelText: 'Email'),
                 ),
                 vertSpace(height: 20),
                 TextFormField(
+                  controller: passwordController,
                   decoration: InputDecoration(labelText: 'Password'),
                 ),
                 vertSpace(height: 20),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    final data = <String, String>{
+                      "firstname": fNameController.text,
+                      "lastname": lNameController.text,
+                      "email": emailController.text,
+                      "password": passwordController.text
+                    };
+                    try {
+                      await FirestoreDB.register(data: data);
+                      Navigator.of(context)
+                          .popAndPushNamed(LoginScreen.routeName);
+                    } catch (e) {
+                      print(e);
+                    }
+                  },
                   child: Text('Sign Up'),
                 ),
                 vertSpace(height: 5),
                 TextButton(
                   child: Text("Login"),
                   onPressed: () {
-                    Navigator.of(context).popAndPushNamed(LoginScreen.routeName);
+                    Navigator.of(context)
+                        .popAndPushNamed(LoginScreen.routeName);
                   },
                 )
               ],
